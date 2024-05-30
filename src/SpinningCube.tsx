@@ -1,28 +1,40 @@
 // src/SpinningCube.tsx
 import React from "react";
-import styled, { keyframes } from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 
 interface SpinningCubeProps {
   size: number;
   color: string;
-  speed: number; // speed in seconds
+  speedX: number; // speed in seconds for X-axis
+  speedY: number; // speed in seconds for Y-axis
+  speedZ: number; // speed in seconds for Z-axis
 }
 
-const spin = keyframes`
+const spin = (speedX: number, speedY: number, speedZ: number) => keyframes`
   0% {
     transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
   }
   100% {
-    transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg);
+    transform: rotateX(${speedX * 360}deg) rotateY(${
+  speedY * 360
+}deg) rotateZ(${speedZ * 360}deg);
   }
 `;
 
-const Cube = styled.div<{ size: number; speed: number }>`
+const Cube = styled.div<{
+  size: number;
+  speedX: number;
+  speedY: number;
+  speedZ: number;
+}>`
   position: relative;
   width: ${({ size }) => `${size}px`};
   height: ${({ size }) => `${size}px`};
   transform-style: preserve-3d;
-  animation: ${spin} ${({ speed }) => `${speed}s`} infinite linear;
+  ${({ speedX, speedY, speedZ }) =>
+    css`
+      animation: ${spin(speedX, speedY, speedZ)} infinite linear;
+    `}
 `;
 
 const Face = styled.div<{ size: number; color: string }>`
@@ -32,11 +44,17 @@ const Face = styled.div<{ size: number; color: string }>`
   border: 2px solid ${({ color }) => color};
 `;
 
-const SpinningCube: React.FC<SpinningCubeProps> = ({ size, color, speed }) => {
+const SpinningCube: React.FC<SpinningCubeProps> = ({
+  size,
+  color,
+  speedX,
+  speedY,
+  speedZ,
+}) => {
   const halfSize = `${size / 2}px`;
 
   return (
-    <Cube size={size} speed={speed}>
+    <Cube size={size} speedX={speedX} speedY={speedY} speedZ={speedZ}>
       <Face
         size={size}
         color={color}
